@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>ภารกิจพิชิตภัยไซเบอร์</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#d8f0ff;--card:#fff;--ink:#27364b;--pri:#ff9f1c;--ok:#2bb673;--no:#e5484d;--soft:#fff4dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17304a;--card:#22364f;--ink:#eef3fa;--soft:#2c4560;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;font-family:Mali,"Noto Sans Thai",Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
+#app{max-width:760px;margin:auto;padding:10px}
+.stage{position:relative;height:240px;border-radius:24px;overflow:hidden;background:linear-gradient(#8fd3ff,#d8f4ff 62%,#9be28a 62%);border:4px solid #fff}
+.dec{position:absolute;font-size:34px}.cl{animation:dr 18s linear infinite alternate}@keyframes dr{to{transform:translateX(120px)}}
+.ch{position:absolute;bottom:-6px;width:110px;animation:bob 1.4s ease-in-out infinite}.ch.b{left:16%}.ch.g{right:16%;animation-delay:.5s}
+@keyframes bob{50%{transform:translateY(-7px)}}
+.arm{transform-box:fill-box;transform-origin:50% 10%;animation:wave 1s ease-in-out infinite alternate}@keyframes wave{to{transform:rotate(-40deg)}}
+.eye{transform-box:fill-box;transform-origin:center;animation:bl 4s infinite}@keyframes bl{95%,100%{transform:scaleY(.1)}}
+.mouth{transform-box:fill-box;transform-origin:center}.talk .mouth{animation:tk .2s infinite alternate}@keyframes tk{from{transform:scaleY(.4)}to{transform:scaleY(1.6)}}
+.bub{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:88%;background:#fff;color:#27364b;border-radius:18px;padding:8px 14px;font-weight:600;font-size:15px;text-align:center;box-shadow:0 3px 0 #0002}
+.panel{background:var(--card);border-radius:24px;padding:16px;margin-top:10px;box-shadow:0 4px 0 #0002}
+h1{font-size:26px;margin:4px 0}h3{margin:6px 0}
+.btn{font:inherit;font-weight:700;font-size:16px;border:0;border-radius:16px;padding:12px 18px;background:var(--pri);color:#fff;cursor:pointer;box-shadow:0 4px 0 #0003;margin:4px}.btn:active{transform:translateY(3px)}.btn:focus-visible,.opt:focus-visible{outline:3px solid #4a90e2}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{font:inherit;color:inherit;background:var(--soft);border:3px solid #ffd27a;border-radius:18px;padding:14px 8px;cursor:pointer;text-align:center;font-weight:700}.tile span{display:block;font-size:34px}.tile:hover{transform:scale(1.04)}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--soft);border:3px solid #ffd27a;border-radius:16px;padding:12px;margin:8px 0;cursor:pointer;font-weight:600}
+.phone{background:var(--soft);border:3px dashed #8aa;border-radius:16px;padding:12px;font-weight:600}
+.bar{height:12px;background:#0002;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.big{font-size:20px;font-weight:700}.ok{color:var(--ok)}.no{color:var(--no)}.c{text-align:center}
+details{margin:6px 0;background:var(--soft);border-radius:12px;padding:8px 12px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body><div id="app">
+<div class="stage" id="stage"><span class="dec cl" style="left:6%;top:70px">☁️</span><span class="dec" style="right:5%;top:62px">☀️</span><span class="dec" style="left:2%;bottom:60px;font-size:44px">🌳</span><span class="dec" style="right:2%;bottom:60px;font-size:44px">🏫</span><div class="bub" id="bub"></div></div>
+<div id="ui"></div></div>
+<script>
+const $=id=>document.getElementById(id);
+function ch(k){const g=k=='g',sh=g?'#ff7eb6':'#4a90e2',hr=g?'#5a3a2a':'#2b2118';
+return `<svg class="ch ${k}" viewBox="0 0 120 170"><rect x="30" y="92" width="60" height="50" rx="16" fill="${sh}"/><rect x="40" y="138" width="14" height="28" rx="6" fill="#4b5d9e"/><rect x="66" y="138" width="14" height="28" rx="6" fill="#4b5d9e"/><rect x="24" y="94" width="14" height="38" rx="7" fill="${sh}"/><g class="arm"><rect x="82" y="94" width="14" height="38" rx="7" fill="${sh}"/><circle cx="89" cy="134" r="7" fill="#ffe0bd"/></g><circle cx="60" cy="58" r="40" fill="#ffe0bd"/>`+(g?`<path d="M18 58a42 42 0 0 1 84 0c-14-6-26-20-30-30-8 14-30 28-54 30z" fill="${hr}"/><circle cx="22" cy="42" r="12" fill="${hr}"/><circle cx="98" cy="42" r="12" fill="${hr}"/><path d="M50 16l10 7 10-7-5 12h-10z" fill="#ff4f93"/>`:`<path d="M18 56c-2-30 20-44 44-42 24 0 42 14 40 42-10-8-20-20-26-24-12 12-36 22-58 24z" fill="${hr}"/>`)+`<g class="eye"><ellipse cx="45" cy="62" rx="5" ry="7" fill="#222"/><ellipse cx="75" cy="62" rx="5" ry="7" fill="#222"/></g><circle cx="35" cy="76" r="7" fill="#ff9aa2" opacity=".6"/><circle cx="85" cy="76" r="7" fill="#ff9aa2" opacity=".6"/><ellipse class="mouth" cx="60" cy="80" rx="9" ry="5" fill="#b3202a"/></svg>`}
+$('stage').insertAdjacentHTML('beforeend',ch('b')+ch('g'));
+let mute=false,cur=0,S={best:{}},Q={};
+const T=[
+{n:'รหัสผ่านปลอดภัย',i:'🔑',f:'รหัสผ่านเหมือนกุญแจบ้าน ยิ่งซับซ้อนยิ่งปลอดภัยนะ',s:'ใจดีกำลังสมัครเกมใหม่ ควรตั้งรหัสผ่านแบบไหนดี?',o:['12345678','ชื่อตัวเองกับวันเกิด','Mk#9tR!2p ยาวและผสมสัญลักษณ์ แล้วเก็บเป็นความลับ'],c:2,p:'ตั้งรหัสให้ยาว ผสมตัวอักษร ตัวเลข สัญลักษณ์|ไม่ใช้รหัสเดียวกันทุกแอป|ไม่บอกรหัสให้ใคร',q:`บอกรหัสผ่านให้เพื่อนสนิทได้|0
+รหัสผ่านยาวผสมอักษรและเลขปลอดภัยกว่า|1
+ใช้รหัสเดียวกันทุกแอปสะดวกและปลอดภัย|0
+ควรเปลี่ยนรหัสผ่านเมื่อสงสัยว่ารั่วไหล|1
+ใช้ชื่อกับวันเกิดเป็นรหัสผ่านได้|0
+การยืนยันตัวตนสองชั้นช่วยเพิ่มความปลอดภัย|1
+จดรหัสผ่านแปะไว้ที่หน้าจอคอม|0
+ควรออกจากระบบเมื่อใช้เครื่องสาธารณะ|1
+password123 เป็นรหัสผ่านที่ดี|0
+ตัวจัดการรหัสผ่านช่วยเก็บรหัสได้ปลอดภัย|1`},
+{n:'ข้อมูลส่วนบุคคล',i:'🪪',f:'ข้อมูลส่วนตัวมีค่ามาก อย่าให้ใครง่ายๆ นะ',s:'ในเกมมีคนถามว่า บ้านอยู่ไหน เรียนโรงเรียนอะไร ทำอย่างไรดี?',o:['บอกไปเลย เขาดูใจดี','ไม่บอก แล้วปรึกษาผู้ใหญ่','บอกแค่ชื่อโรงเรียน'],c:1,p:'ที่อยู่ เบอร์โทร เลขบัตร เป็นข้อมูลส่วนตัว|ตั้งบัญชีให้เป็นส่วนตัว|ถามผู้ปกครองก่อนให้ข้อมูล',q:`โพสต์เลขบัตรประชาชนลงโซเชียลได้|0
+ควรตั้งบัญชีให้เป็นส่วนตัว|1
+บอกที่อยู่บ้านกับคนในเกมออนไลน์ได้|0
+รูปชุดนักเรียนที่เห็นชื่อโรงเรียน ควรคิดก่อนโพสต์|1
+ควรให้ผู้ปกครองช่วยดูก่อนกรอกข้อมูลในเว็บไซต์|1
+เว็บที่ขอข้อมูลเกินจำเป็น ควรกรอกให้ครบ|0
+เบอร์โทรศัพท์เป็นข้อมูลที่ควรปกป้อง|1
+แชร์ตำแหน่งที่อยู่ตลอดเวลาปลอดภัยดี|0
+ถ่ายรูปบัตรส่งให้คนไม่รู้จักได้|0
+ควรตรวจว่าแอปขอใช้กล้องและรายชื่อเกินจำเป็นไหม|1`},
+{n:'ลิงก์และข้อความหลอกลวง',i:'🎣',f:'มิจฉาชีพชอบส่งข้อความล่อใจให้เรากดลิงก์',s:'มีข้อความว่า ยินดีด้วย! คุณถูกรางวัล iPhone 15 กดลิงก์ http://fr33-prize.xyz เพื่อรับของ',o:['กดลิงก์ทันที','ไม่กด ลบ และบล็อกผู้ส่ง','ส่งต่อให้เพื่อนๆ'],c:1,p:'ของฟรีหรือรางวัลที่ไม่ได้ร่วมสนุก มักเป็นกลลวง|ไม่บอกรหัส OTP กับใคร|ไม่แน่ใจให้ถามผู้ใหญ่',q:`ข้อความบอกว่าถูกรางวัล ให้กดลิงก์ทันที|0
+ตรวจที่อยู่เว็บให้ดีก่อนกรอกข้อมูล|1
+ธนาคารจริงไม่ขอรหัส OTP ทางข้อความ|1
+ลิงก์ย่อจากคนแปลกหน้ากดได้เลย|0
+ข้อความขู่ให้รีบทำ มักเป็นกลลวง|1
+ส่ง OTP ให้คนที่อ้างเป็นเจ้าหน้าที่ได้|0
+เว็บที่สะกดชื่อแบรนด์ผิดเพี้ยนน่าสงสัย|1
+ไม่แน่ใจ ควรปรึกษาผู้ใหญ่|1
+แจกของฟรีแต่ขอเลขบัตรเครดิต น่าเชื่อถือ|0
+ควรบล็อกและรายงานข้อความหลอกลวง|1`},
+{n:'สื่อสังคมออนไลน์',i:'📱',f:'สิ่งที่โพสต์ไปแล้ว อาจอยู่บนโลกออนไลน์ไปตลอดนะ',s:'เก่งอยากโพสต์รูปไปเที่ยว พร้อมเช็กอินว่า ที่บ้านไม่มีใครเลย ทำอย่างไรดี?',o:['โพสต์สาธารณะเลย','ตั้งให้เห็นเฉพาะเพื่อน และไม่บอกว่าบ้านว่าง','โพสต์แล้วแท็กทุกคน'],c:1,p:'คิดก่อนโพสต์ทุกครั้ง|ตั้งความเป็นส่วนตัว|ขออนุญาตก่อนโพสต์รูปเพื่อน',q:`โพสต์ได้ทุกเรื่องเพราะลบทีหลังได้|0
+คิดก่อนโพสต์ เพราะลบแล้วอาจมีคนเซฟไว้|1
+รับแอดทุกคนเพื่อเพิ่มผู้ติดตาม|0
+ตั้งโพสต์ให้เห็นเฉพาะเพื่อนได้|1
+เช็กอินบอกว่าอยู่บ้านคนเดียวได้|0
+ควรขออนุญาตก่อนแท็กหรือโพสต์รูปเพื่อน|1
+เล่นโซเชียลนานเกินไปส่งผลต่อสุขภาพ|1
+โพสต์รูปที่อาจทำให้อายภายหลังได้|0
+ควรตรวจการตั้งค่าความเป็นส่วนตัวสม่ำเสมอ|1
+ใช้ภาษาสุภาพ เคารพผู้อื่นบนโซเชียล|1`},
+{n:'คนแปลกหน้าออนไลน์',i:'🕵️',f:'คนที่คุยด้วยออนไลน์ อาจไม่ใช่คนที่เราคิดนะ',s:'มีคนแปลกหน้าทักมาว่า อยากเป็นเพื่อนด้วย นัดเจอกันไหม?',o:['นัดเจอเลย','บล็อก แล้วบอกผู้ปกครอง','ส่งรูปให้ดูก่อน'],c:1,p:'คนออนไลน์อาจไม่ใช่ตัวจริง|ไม่นัดเจอตามลำพัง|มีอะไรผิดปกติให้บอกผู้ใหญ่',q:`คนที่รู้จักออนไลน์ อาจไม่ใช่ตัวจริงตามรูป|1
+นัดเจอคนที่รู้จักทางเน็ตตามลำพังได้|0
+ถ้าอีกฝ่ายขอรูปส่วนตัว ควรบอกผู้ใหญ่|1
+คนที่ให้ของขวัญในเกมแล้วขอข้อมูล น่าไว้ใจ|0
+ควรบล็อกและรายงานคนที่ทำให้อึดอัด|1
+ถูกขอให้เก็บเป็นความลับห้ามบอกพ่อแม่ เป็นสัญญาณอันตราย|1
+บอกชื่อโรงเรียนกับคนแปลกหน้าในแชตได้|0
+เก็บภาพแชตไว้เป็นหลักฐานเมื่อมีปัญหา|1
+คุยกันนานๆ แปลว่าไว้ใจได้เต็มที่|0
+เล่าให้ผู้ปกครองฟังเมื่อมีคนแปลกหน้าทักมา|1`},
+{n:'มัลแวร์และภัยไซเบอร์',i:'🦠',f:'มัลแวร์แอบเข้ามากับไฟล์และลิงก์ที่ไม่น่าไว้ใจ',s:'มีป๊อปอัปขึ้นมาว่า เครื่องติดไวรัส! กดติดตั้งทันที!',o:['กดติดตั้งทันที','ปิดหน้าต่าง แล้วให้ผู้ใหญ่ช่วยสแกนไวรัส','กรอกข้อมูลส่วนตัวเพื่อแก้ไข'],c:1,p:'โหลดแอปจากแหล่งทางการ|อัปเดตระบบและมีโปรแกรมป้องกันไวรัส|ไม่กดไฟล์หรือป๊อปอัปแปลกๆ',q:`โหลดแอปจากร้านแอปทางการปลอดภัยกว่า|1
+กดไฟล์แนบจากอีเมลของคนที่ไม่รู้จักได้|0
+ควรอัปเดตระบบและแอปสม่ำเสมอ|1
+เว็บแจกเกมเถื่อนฟรีปลอดภัย|0
+โปรแกรมป้องกันไวรัสช่วยได้|1
+ป๊อปอัปเตือนว่าติดไวรัส ให้กดทันที|0
+ควรสำรองข้อมูลสำคัญไว้เสมอ|1
+เสียบแฟลชไดรฟ์ที่เก็บได้ได้เลยไม่ต้องตรวจ|0
+ไม่ควรทำธุรกรรมการเงินผ่าน Wi-Fi สาธารณะ|1
+เครื่องช้าผิดปกติ อาจติดมัลแวร์ ควรตรวจสอบ|1`},
+{n:'รู้เท่าทันข่าวปลอม',i:'📰',f:'ก่อนเชื่อหรือแชร์ ต้องตรวจสอบก่อนเสมอนะ',s:'เพื่อนส่งข่าวมาว่า น้ำดื่มยี่ห้อหนึ่งมีสารอันตราย ส่งต่อด่วน!',o:['ส่งต่อทันที','ตรวจแหล่งข่าวก่อนแชร์','โพสต์เตือนทุกคนเลย'],c:1,p:'ตรวจแหล่งที่มาและวันที่|เทียบข่าวจากหลายแหล่งที่เชื่อถือได้|คิดก่อนแชร์',q:`ข่าวที่แชร์เยอะ ต้องเป็นข่าวจริง|0
+ตรวจแหล่งที่มาของข่าวก่อนแชร์|1
+พาดหัวที่ตื่นเต้นเกินจริงน่าสงสัย|1
+ข้อความ ส่งต่อด่วน เชื่อได้เลย|0
+ควรเทียบข่าวเดียวกันจากหลายแหล่งที่เชื่อถือได้|1
+รูปภาพอาจถูกตัดต่อหรือสร้างด้วย AI ได้|1
+ข่าวที่ตรงกับความเชื่อเรา ต้องจริงเสมอ|0
+ควรดูวันที่ของข่าว เพราะอาจเป็นข่าวเก่า|1
+อ่านแค่พาดหัวก็พอ ไม่ต้องอ่านเนื้อหา|0
+เว็บตรวจสอบข่าวปลอมช่วยเราได้|1`},
+{n:'รับมือการกลั่นแกล้ง',i:'🤝',f:'คำพูดออนไลน์ ก็ทำร้ายจิตใจได้เหมือนกันนะ',s:'ในกลุ่มแชตมีคนล้อและแชร์รูปน่าอายของเพื่อน ทำอย่างไรดี?',o:['หัวเราะและกดไลก์','ไม่ร่วม เก็บหลักฐาน แล้วบอกครูหรือผู้ปกครอง','ล้อกลับให้แรงกว่า'],c:1,p:'ไม่ร่วมแกล้ง และไม่เงียบเฉย|เก็บหลักฐาน บล็อก รายงาน|บอกผู้ใหญ่ที่ไว้ใจ',q:`ล้อเลียนคนอื่นในกลุ่มแชตเป็นเรื่องตลก|0
+ถ้าถูกแกล้ง ควรบอกผู้ใหญ่ที่ไว้ใจ|1
+ตอบโต้ด้วยคำหยาบเป็นทางออกที่ดี|0
+ควรเก็บภาพหน้าจอเป็นหลักฐาน|1
+แชร์รูปน่าอายของเพื่อน ก็คือการกลั่นแกล้ง|1
+เห็นเพื่อนถูกแกล้ง ควรเงียบเฉย|0
+บล็อกและรายงานบัญชีที่รังแกได้|1
+คำพูดออนไลน์ทำร้ายใจคนได้จริง|1
+ปลอมบัญชีเพื่อแกล้งคนอื่นไม่เป็นไร|0
+ควรปลอบใจและช่วยเหลือเพื่อนที่ถูกแกล้ง|1`}];
+function snd(ok){try{const a=new(window.AudioContext||webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type=ok?'triangle':'sawtooth';o.frequency.setValueAtTime(ok?660:220,a.currentTime);if(ok)o.frequency.setValueAtTime(990,a.currentTime+.15);g.gain.setValueAtTime(.15,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.4);o.start();o.stop(a.currentTime+.4)}catch(e){}}
+function say(t,k='b'){return new Promise(r=>{$('bub').textContent=t;const c=document.querySelector('.ch.'+k),ss=window.speechSynthesis;if(ss)ss.cancel();c.classList.add('talk');const d=()=>{c.classList.remove('talk');r()};
+if(mute||!ss){setTimeout(d,Math.min(4000,t.length*70));return}
+const u=new SpeechSynthesisUtterance(t);u.lang='th-TH';u.pitch=k=='g'?1.8:1.4;u.rate=.95;const v=ss.getVoices().find(v=>v.lang.replace('_','-').startsWith('th'));if(v)u.voice=v;u.onend=d;u.onerror=d;ss.speak(u)})}
+function ui(h){cur++;$('ui').innerHTML=h;return cur}
+function home(){const id=ui(`<div class="panel c"><h1>🛡️ ภารกิจพิชิตภัยไซเบอร์</h1><p>ผจญภัยกับน้องเก่งและน้องใจดี เรียนรู้ 8 เรื่องความปลอดภัยบนอินเทอร์เน็ต</p><button class="btn" onclick="menu()">▶ เริ่มเรียน</button><details><summary>📘 วิธีใช้</summary>เลือกหัวข้อ ดูตัวละครคุย ลองสถานการณ์จำลอง อ่านสรุป แล้วทำแบบทดสอบ 10 ข้อ ต้องกดเริ่มเรียนเพื่อเปิดเสียง</details><details><summary>🎯 เกี่ยวกับ</summary>ได้รู้จักรหัสผ่าน ข้อมูลส่วนตัว ลิงก์หลอกลวง โซเชียล คนแปลกหน้า มัลแวร์ ข่าวปลอม และการกลั่นแกล้งออนไลน์</details></div>`);$('bub').textContent='สวัสดีจ้ะ! มาเรียนรู้ความปลอดภัยบนเน็ตกัน'}
+function menu(){let tot=0,n=0;T.forEach((t,i)=>{if(S.best[i]!=null){tot+=S.best[i];n++}});
+const id=ui(`<div class="panel"><h3 class="c">เลือกหัวข้อที่ต้องการเรียนรู้</h3><div class="grid">${T.map((t,i)=>`<button class="tile" onclick="scene(${i})"><span>${t.i}</span>${t.n}<br>${S.best[i]!=null?'⭐ '+S.best[i]+'/10':''}</button>`).join('')}</div><p class="c">เรียนแล้ว ${n}/8 หัวข้อ · คะแนนรวม ${tot}/80 ${n==8?(tot>=64?'🏆 Cyber Guard ยอดเยี่ยม!':'ลองทบทวนอีกนิดนะ'):''}</p><div class="c"><button class="btn" style="background:#4a90e2" onclick="mute=!mute;speechSynthesis&&speechSynthesis.cancel();this.textContent=mute?'🔇 เสียงปิด':'🔊 เสียงเปิด'">🔊 เสียงเปิด</button></div></div>`);say('เลือกหัวข้อที่อยากเรียนได้เลยจ้ะ','g')}
+async function scene(i){const t=T[i],id=ui(`<div class="panel c"><h3>${t.i} ${t.n}</h3><p>ตัวละครกำลังพูดคุย... ฟังกันก่อนนะ</p><button class="btn" onclick="sim(${i})">ไปสถานการณ์จำลอง ➜</button></div>`);
+await say(`สวัสดี! วันนี้เรามาเรียนเรื่อง ${t.n} กันนะ`,'b');if(cur!=id)return;await say(t.f,'g')}
+function sim(i){const t=T[i];ui(`<div class="panel"><h3>🎬 สถานการณ์จำลอง</h3><div class="phone">${t.s}</div><h3>ถ้าเป็นเรา จะทำอย่างไร?</h3>${t.o.map((o,k)=>`<button class="opt" onclick="pick(${i},${k})">${'กขค'[k]}. ${o}</button>`).join('')}</div>`);say(t.s,'g')}
+function pick(i,k){const t=T[i],ok=k==t.c;snd(ok);ui(`<div class="panel c"><h1>${ok?'✅':'❌'}</h1><p class="big ${ok?'ok':'no'}">${ok?'ถูกต้อง! เก่งมากเลย':'ยังไม่ปลอดภัยนะ'}</p>${ok?'':`<p>ทางที่ปลอดภัยคือ: ${t.o[t.c]}</p>`}<button class="btn" onclick="summ(${i})">ดูสรุปบทเรียน ➜</button>${ok?'':`<button class="btn" style="background:#4a90e2" onclick="sim(${i})">ลองใหม่</button>`}</div>`);say(ok?'ถูกต้อง! เก่งมากเลย':'ยังไม่ปลอดภัยนะ ลองคิดใหม่ดูนะ',ok?'b':'g')}
+function summ(i){const t=T[i],p=t.p.split('|');ui(`<div class="panel"><h3>📝 สรุปสิ่งที่ได้เรียนรู้</h3>${p.map(x=>`<div class="phone" style="margin:6px 0">✔ ${x}</div>`).join('')}<div class="c"><button class="btn" onclick="startQ(${i})">ทำแบบทดสอบ 10 ข้อ ✏️</button></div></div>`);say('สรุปนะ '+p.join(' '),'g')}
+function startQ(i){Q={i,n:0,sc:0,l:T[i].q.split('\n').map(x=>x.split('|'))};qz()}
+function qz(){const [t]=Q.l[Q.n];ui(`<div class="panel"><div class="bar"><i style="width:${Q.n*10}%"></i></div><h3>ข้อ ${Q.n+1}/10</h3><p class="big">${t}</p><div id="fb" class="c"><button class="btn" style="background:var(--ok)" onclick="ans(1)">✔ ถูก</button><button class="btn" style="background:var(--no)" onclick="ans(0)">✘ ผิด</button></div></div>`);say(t,'b')}
+function ans(v){const a=+Q.l[Q.n][1],ok=v==a;if(ok)Q.sc++;snd(ok);$('fb').innerHTML=`<p class="big ${ok?'ok':'no'}">${ok?'ถูกต้อง! 🎉':'ไม่ถูกนะ คำตอบคือ '+(a?'ถูก':'ผิด')}</p><button class="btn" onclick="nx()">${Q.n<9?'ข้อต่อไป ➜':'ดูผลคะแนน 🏆'}</button>`;say(ok?'เก่งมาก!':'ไม่เป็นไร ข้อหน้าสู้ๆ นะ',ok?'g':'b')}
+function nx(){Q.n++;Q.n<10?qz():res()}
+function res(){const s=Q.sc;S.best[Q.i]=Math.max(S.best[Q.i]||0,s);ui(`<div class="panel c"><h1>${s>=8?'🏆':s>=5?'🌟':'💪'} ยินดีด้วย!</h1><p class="big">คุณได้ ${s} / 10 คะแนน</p><div class="bar"><i style="width:${s*10}%"></i></div><p>${s>=8?'ระดับ Cyber Guard ผู้พิทักษ์ไซเบอร์!':s>=5?'ดีมาก! ทบทวนอีกนิดจะเก่งขึ้นอีก':'ไม่เป็นไร ลองเรียนอีกรอบนะ'}</p><button class="btn" onclick="startQ(${Q.i})">ทำใหม่</button><button class="btn" style="background:#4a90e2" onclick="menu()">กลับหน้าเมนู</button></div>`);say(s>=8?'เยี่ยมไปเลย! คุณเป็นผู้พิทักษ์ไซเบอร์แล้ว':'พยายามได้ดีมากเลย','g')}
+home();
+</script></body></html>
